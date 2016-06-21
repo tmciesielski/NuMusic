@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Scanner;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -37,10 +38,23 @@ public class BpmTwitterScraper {
         c.setTime(new Date()); // Get today's date
         c.add(Calendar.DATE, -1); // Start day = 1 day ago
         startDate = c.getTime();
-        
         // Set final date as oldest tweet, researched from internet 
         //Date finalEndDate = sdf.parse("2011-02-04");
-        Date finalEndDate = sdf.parse("2015-06-01");
+        Scanner sc = new Scanner(System.in);
+        String[] months = {"", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+        System.out.println("This is the information for the end date (oldest date is Feb 4, 2011");
+        System.out.print("Enter month with the two digits (Ex. 01, 10, 30) : ");
+        String monthInt = sc.nextLine().trim();
+        String month = months[Integer.parseInt(monthInt)];
+        
+        System.out.print("Enter date with the two digits  (Ex. 01, 10, 30) : ");
+        String day = sc.nextLine().trim();
+        
+        System.out.print("Enter year with four digits     (Ex. 1997, 2016) : ");
+        String year = sc.nextLine().trim();
+        
+        Date finalEndDate = sdf.parse(year + "-" + monthInt + "-" + day);
+        
         
         // While loop scrapes 1 day of tweets at a time
         while(true) {  
@@ -50,13 +64,17 @@ public class BpmTwitterScraper {
             c.add(Calendar.DATE, -1); // temp end day = 2 days ago
             tempEndDate = c.getTime();            
             System.out.println("\n\n"+"Searching between "+sdf.format(tempEndDate)+" and "+sdf.format(startDate));
+            String[] endDates = startDate.toString().split("\\s+");
             
             // Get control table dates to skip
             Date newestDate = controlTable.getNewestDate(xmChannel);
             Date oldestDate = controlTable.getOldestDate(xmChannel);
             
+            System.out.println("Start Date: " + startDate);
+            System.out.println("End Date: " + finalEndDate);
+            System.out.println(" ");
             // Check for initialLoad end conditions
-            if(startDate.equals(finalEndDate)) {
+            if(month.equals(endDates[1]) && day.equals(endDates[2]) && year.equals(endDates[5])){
             	System.out.println("End of twitter history reached");
             	break;
         	// if startDate is between newestDate and oldestDate skip
@@ -69,6 +87,9 @@ public class BpmTwitterScraper {
             }
             
             // Open a firefox page to twitter search page
+            // Selenium has dependancy on firefox version
+            // Selenium 2.53.0 compatible with firefox 45.0
+            // https://ftp.mozilla.org/pub/firefox/releases/45.0/win64/en-US/
             WebDriver driver = new FirefoxDriver();
             boolean reachedBottom = false;
             String url = "https://twitter.com/search?f=realtime&q=from%3A"+xmChannel+
@@ -110,11 +131,14 @@ public class BpmTwitterScraper {
 	        	WebElement tweet = tweets.get(x);
 	        	
 	        	String song = null;
+	        	String artist = null;
+	        	String title = null;
 	        	Date date = null;
 	        	String idString = null;
 	        	long id = 0;
 	        	
 	        	song = tweet.findElement(By.className("tweet-text")).getText();
+	           	
 	        	
 	        	long dateInMs = Long.parseLong(tweet.findElement(By.className("_timestamp")).getAttribute("data-time-ms"));
 	        	date = new Date(dateInMs);
@@ -136,7 +160,10 @@ public class BpmTwitterScraper {
 					garbageTable.addSong(xmChannel, song, date, id);
 				// else add it to the XM song table
 		    	} else {
-					rawXmTable.addSong(xmChannel, song, date, id);
+		    		String[] songSplit = song.split("-", 2);
+		        	artist = songSplit[0];
+		        	title = songSplit[1];
+					rawXmTable.addSong(xmChannel, artist, title, song, date, id);
 		    	}
 		    	
 		    	// update the control table		    	
@@ -151,6 +178,7 @@ public class BpmTwitterScraper {
         }
     }
     
+    
 	private static String cleanGarbage(String song) {
 		
 		String split = " playing on ";
@@ -159,7 +187,8 @@ public class BpmTwitterScraper {
     		song = split1[0];
     	}
     	
-		String[] garbageStrings = {"#BpmBreaker", "#Debut", "#Ultra2014", "#AandBSXM"};
+    	//#bpmDebut?
+		String[] garbageStrings = {"#bpmDebut", "#bpmBreaker", "#BpmBreaker", "#Debut", "#Ultra2014", "#AandBSXM"};
     	for(String garbage : garbageStrings) {
     		if(song.contains(garbage)) {
     			String garbage1 = " "+garbage+" ";
@@ -179,4 +208,6 @@ public class BpmTwitterScraper {
     	
 		return song;
 	}
+	
+
 }

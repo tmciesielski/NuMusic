@@ -9,6 +9,7 @@ import objects.XmSong;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import tables.XmTable;
 import tables.YoutubeTable;
@@ -22,7 +23,6 @@ public class GetYoutubeLinks {
 		XmTable musicTable = new XmTable(conn);
 		YoutubeTable youtubeTable = new YoutubeTable(conn);
 		ArrayList<XmSong> songs = musicTable.getSongs();
-		
 		int j = 1;
 		for(XmSong song : songs) {
 			
@@ -68,21 +68,35 @@ public class GetYoutubeLinks {
 			}
 			
 			Elements currentData = document.select("h3.yt-lockup-title > a");
+
 			//Search top 3 results for a non-list
-			int results = 5;
-			if(currentData.size() < 5) {
-				results = currentData.size();
-			}
+			int results = currentData.size();
+//			int results = 5;
+//			if(currentData.size() < 5) {
+//				results = currentData.size();
+//			}
+			//System.out.println("does it even get here");
 			
 			if(results != 0) {
+				int k = 1;
 				for (int i=0; i<results; i++) {
 					String link = currentData.get(i).attr("href");
 					String title = currentData.get(i).attr("title");
+					System.out.println(link);
 					if(link.contains("list")) {
+						k+=2;
 						System.out.println("ERROR: First Youtube link is a list of videos");
 						continue;
-					} else {
-						youtubeTable.addSong(songName, link, title);
+					} else if(link.contains("user")){
+						k+=2;
+						System.out.println("ERROR: First Youtube link is a user account");
+						continue;
+					}
+					else {
+						Elements playCount = document.select("ul.yt-lockup-meta-info > li");
+						int stuff = Integer.parseInt(playCount.get(k).childNode(0).toString().replace(" views", "").replace(",", ""));
+						System.out.println(stuff);
+						youtubeTable.addSong(songName, link, title, stuff);
 						break;
 					}	
 				}

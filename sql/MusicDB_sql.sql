@@ -2,6 +2,8 @@
 create table APP.RAW_XM_SONGS (
 ID integer not null generated always as identity (start with 1, increment by 1),
 SOURCE varchar(255),
+ARTIST varchar(255),
+TITLE varchar(255),
 SONG varchar(255),
 DATE timestamp,
 TWITTER_ID bigint,
@@ -9,15 +11,27 @@ unique (ID)
 )
 drop table APP.RAW_XM_SONGS
 
+select * from APP.RAW_XM_SONGS
+
 create table APP.RAW_XM_GARBAGE (
 ID integer not null generated always as identity (start with 1, increment by 1),
 SOURCE varchar(255),
+ARTIST varchar(255),
+TITLE varchar(255),
 SONG varchar(255),
 DATE timestamp,
 TWITTER_ID bigint,
 unique (ID)
 )
 drop table APP.RAW_XM_GARBAGE
+
+drop table APP.RAW_XM_GARBAGE;
+drop table APP.RAW_XM_SONGS;
+drop table APP.XM_SONGS
+
+select * from APP.RAW_XM_SONGS ORDER BY TITLE
+select * from APP.RAW_XM_GARBAGE
+select * from APP.XM_SONGS 
 
 create table APP.CONTROL (
 ID integer not null,
@@ -39,6 +53,8 @@ update APP.CONTROL set NEWEST_DATE = '1983-01-01 00:00:00', OLDEST_DATE = '2100-
 /* PHASE 2 */
 create table APP.XM_SONGS (
 ID integer not null generated always as identity (start with 1, increment by 1),
+ARTIST varchar(255),
+TITLE varchar(255),
 SONG varchar(255),
 NEWEST_DATE timestamp,
 OLDEST_DATE timestamp,

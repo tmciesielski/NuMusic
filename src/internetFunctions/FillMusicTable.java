@@ -20,6 +20,7 @@ public class FillMusicTable {
 		RawXmTable rawXmTable = new RawXmTable(conn);
 		XmTable xmTable = new XmTable(conn);
 		
+		//obtains a string array, where the first value is the song name and the second value is the date
 		ArrayList<String[]> songs = rawXmTable.getSongs();		
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss"); //12 hour
 		XmSong xmSong = null;
@@ -27,10 +28,13 @@ public class FillMusicTable {
 		for(String[] song : songs) {
 			String currSong = song[0];
 			Date currDate = sdf.parse(song[1]);
+			String artist = song[2];
+			String title = song[3];
 			
 			// create new xmSong for the 1st instance
+			// edge case that only occurs once
 			if(songs.indexOf(song) == 0) {
-				xmSong = new XmSong(currSong, currDate, currDate, 1);
+				xmSong = new XmSong(currSong, artist, title, currDate, currDate, 1);
 				
 			// compare subsequent song names to the current xmSong
 			// if it's the same song name
@@ -44,7 +48,7 @@ public class FillMusicTable {
 				xmTable.addSong(xmSong);
 				
 				// start incrementing a new xmSong
-				xmSong = new XmSong(currSong, currDate, currDate, 1);
+				xmSong = new XmSong(currSong, artist, title, currDate, currDate, 1);
 			}
 			
 			// if it's the last song, add the current xmSong

@@ -1,5 +1,9 @@
 package test;
 
+import java.io.File;
+import java.io.IOException;
+
+/*
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -39,3 +43,65 @@ public class test {
 	}
 
 }
+*/
+
+
+import java.util.Arrays;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+public class test {
+
+    	public static void main(String[]args)
+        {
+    		Document document = null;
+			try {
+				document = Jsoup.connect("https://www.youtube.com/results?search_query=cedric+gervais+feat+jack+wilby+-+with+you").get();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			Elements currentData = document.select("h3.yt-lockup-title > a");
+			int results = currentData.size();
+			
+			Elements playCount = document.select("ul.yt-lockup-meta-info > li");
+			int result = playCount.size();
+			System.out.println(result);
+			
+			for (int i=0; i<results; i++) {
+				System.out.println(i);
+				String stuff = playCount.get(i).childNode(0).toString();
+				System.out.println(stuff);
+			}
+			
+			/*
+			if(results != 0) {
+				for (int i=0; i<results; i++) {
+					String link = currentData.get(i).attr("href");
+					String title = currentData.get(i).attr("title");
+					if(link.contains("list")) {
+						System.out.println("ERROR: First Youtube link is a list of videos");
+						continue;
+					} else if(link.contains("user")){
+						System.out.println("ERROR: First Youtube link is a user account");
+						continue;
+					}
+					else {
+						System.out.println(title + " " + link);
+						break;
+					}	
+				}
+			}
+			*/
+        }
+
+    	
+    }
+
+
+
+

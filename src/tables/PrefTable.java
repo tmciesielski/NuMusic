@@ -27,7 +27,7 @@ public class PrefTable {
 			results = s.executeQuery("select * from "+tableName+" where SONG_NAME = '"+songName+"'");
 			
 			while (results.next()) {
-				pref.setSongName(results.getString(1));
+	  			pref.setSongName(results.getString(1));
 				pref.setPlayDate(sdf.parse(results.getString(2)));
 				pref.setPlus(Integer.parseInt(results.getString(3)));
 				pref.setMinus(Integer.parseInt(results.getString(4)));

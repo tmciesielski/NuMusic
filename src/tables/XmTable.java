@@ -25,6 +25,8 @@ public class XmTable {
 	public void addSong(XmSong xmSong) throws IOException, SQLException {
 		Statement s = derbyConn.createStatement();
 		String song = xmSong.getSongName();
+		String artist = xmSong.getArtist();
+		String title = xmSong.getTitle();
 		Date newestDate = xmSong.getNewestDate();
 		Date oldestDate = xmSong.getOldestDate();
 		int playCount = xmSong.getPlayCount();
@@ -34,8 +36,10 @@ public class XmTable {
 			if(!songExists(xmSong)) {
 				System.out.println("Adding: "+song);
 				song = song.replace("'", "''");
-				s.executeUpdate("insert into "+tableName+" (SONG, NEWEST_DATE, OLDEST_DATE, PLAY_COUNT) values"
-						+  " ('"+song+"', '"+sdf.format(newestDate)+"', '"+sdf.format(oldestDate)+"', "+playCount+")");
+				artist = artist.replace("'", "''");
+				title = title.replace("'", "''");
+				s.executeUpdate("insert into "+tableName+" (ARTIST, TITLE, SONG, NEWEST_DATE, OLDEST_DATE, PLAY_COUNT) values"
+						+  " ('"+artist+"', '"+title+"', '"+song+"', '"+sdf.format(newestDate)+"', '"+sdf.format(oldestDate)+"', "+playCount+")");
 				
 			// Else throw exception
 			} else {
@@ -77,11 +81,12 @@ public class XmTable {
 		
 		try {
 			s = derbyConn.createStatement();
+			//* has id, artist, title, song, newest, oldest, count
 			results = s.executeQuery("select * from "+tableName+" order by PLAY_COUNT desc, NEWEST_DATE desc");
 			
 			while (results.next()) {
-				XmSong song = new XmSong(results.getString(2), sdf.parse(results.getString(3)), 
-						sdf.parse(results.getString(4)), Integer.parseInt(results.getString(5)));
+				XmSong song = new XmSong(results.getString(2), results.getString(3), results.getString(4), sdf.parse(results.getString(5)), 
+						sdf.parse(results.getString(6)), Integer.parseInt(results.getString(7)));
 				songs.add(song);
 			}
         } finally {

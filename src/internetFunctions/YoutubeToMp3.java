@@ -1,7 +1,8 @@
-package internetFunctions;
+ package internetFunctions;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -18,12 +19,12 @@ import tables.YoutubeTable;
 
 public class YoutubeToMp3 {
 
-	public static void downloadSongs() throws InterruptedException, ClassNotFoundException, SQLException {
+	public static void downloadSongs() throws InterruptedException, ClassNotFoundException, SQLException, IOException {
 		
 		Connection conn = MusicDB.getConnection();
 		YoutubeTable youtubeTable = new YoutubeTable(conn);
-		ArrayList<String> youtubeLinks = youtubeTable.getLinks();
-		String downloadDir = "/home/tommying/Music";
+		ArrayList<String[]> youtubeLinks = youtubeTable.getLinks();
+		String downloadDir = "C:\\College\\Freshmen Summer\\Music";
 
 		// Set the firefox profile settings
 		FirefoxProfile profile = new FirefoxProfile();
@@ -34,12 +35,14 @@ public class YoutubeToMp3 {
 		profile.setPreference("browser.helperApps.neverAsk.saveToDisk", "audio/mp3");
 		profile.setPreference("browser.helperApps.neverAsk.saveToDisk", "audio/mpeg");		
 
-		for(String youtubeLink : youtubeLinks) {
-			int downloadNumber = youtubeLinks.indexOf(youtubeLink) + 1;
+		for(String[] youtubeLinkWithSongAndLink : youtubeLinks) {
+			int downloadNumber = youtubeLinks.indexOf(youtubeLinkWithSongAndLink) + 1;
 			
-			if(downloadNumber <= 9) {
-				continue;
-			}
+//			if(downloadNumber <= 9) {
+			
+//				System.out.println("SKIPPED");
+//				continue;
+//			}
 			// Open a firefox page to twitter search page
 			WebDriver driver = new FirefoxDriver(profile);
 			String url = "http://www.youtube-mp3.org/";
@@ -49,7 +52,7 @@ public class YoutubeToMp3 {
 			WebElement textBox = driver.findElement(By.id("youtube-url"));
 			textBox.click();
 			textBox.clear();
-			youtubeLink = "http://www.youtube.com"+youtubeLink;
+			String youtubeLink = "http://www.youtube.com"+youtubeLinkWithSongAndLink[1];
 			textBox.sendKeys(youtubeLink);
 	
 			WebElement convertButton = driver.findElement(By.id("submit"));
@@ -103,6 +106,7 @@ public class YoutubeToMp3 {
 					if(fileList.length > 0) {
 						Thread.sleep(1000);
 					} else {
+						renameFile(youtubeLinkWithSongAndLink[2], youtubeLinkWithSongAndLink[0], downloadDir);
 						System.out.println("Downloaded ("+downloadNumber+"/"+youtubeLinks.size()+")");
 						downloaded = true;
 					}
@@ -112,6 +116,22 @@ public class YoutubeToMp3 {
 				driver.quit();
 			}
 		}
+	}
+	
+	public static void renameFile(String oldName, String newName, String downloadDir) throws IOException {
+		newName = newName.replace("\\", ", ");
+		newName = newName.replace(":", ", ");
+		newName = newName.replace("/", ", ");
+		newName = newName.replace("?", ", ");
+		newName = newName.replace(">", ", ");
+		newName = newName.replace("<", ", ");
+		newName = newName.replace("*", ", ");
+		newName = newName.replace("\"", "\"");
+		newName = newName.replace("|", ", ");
+		newName = newName.replace("/\\", ", ");
+		
+		System.out.println(newName);
+		new File(downloadDir + "\\\\" + oldName + ".mp3").renameTo(new File(downloadDir + "\\\\" + newName + ".mp3"));
 	}
 
 }

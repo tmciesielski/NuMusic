@@ -1,4 +1,6 @@
 package tables;
+//all song names from twitter which aren't as good as youtube
+//xm is all songs on youtube
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -19,15 +21,14 @@ public class RawXmTable {
 		derbyConn = conn;
 	}
 	
-	public void addSong(String source, String song, Date date, long twitterId) throws IOException, SQLException {
+	public void addSong(String source, String artist, String title, String song, Date date, long twitterId) throws IOException, SQLException {
 		Statement s = derbyConn.createStatement();
-
 		try {
 			// Add song if it doesn't exist
 			if(!songExists(twitterId)) {
 				System.out.println("Adding: "+song);
-				s.executeUpdate("insert into "+tableName+" (SOURCE, SONG, DATE, TWITTER_ID) values"
-						+  " ('"+source+"','"+song+"', '"+sdf.format(date)+"', "+twitterId+")");
+				s.executeUpdate("insert into "+tableName+" (SOURCE, ARTIST, TITLE, SONG, DATE, TWITTER_ID) values"
+						+  " ('"+source+"', '"+artist+"', '"+title+"', '"+song+"', '"+sdf.format(date)+"', "+twitterId+")");
 				
 			// Else throw exception
 			} else {
@@ -65,13 +66,15 @@ public class RawXmTable {
 		ArrayList<String[]> songs = new ArrayList<String[]>();
 		ResultSet results;
 		Statement s = null;
-		
+		 
 		try {
 			s = derbyConn.createStatement();
-			results = s.executeQuery("select SONG, DATE from "+tableName+" order by SONG asc, DATE asc");
+			results = s.executeQuery("select SONG, DATE, ARTIST, TITLE from "+tableName+" order by SONG asc, DATE asc");
 			
 			while (results.next()) {
-				String[] song = { results.getString(1), results.getString(2) };
+				//not a zero based indexing with result sets
+				//song, date, artist, title
+				String[] song = { results.getString(1), results.getString(2), results.getString(3), results.getString(4) };
 				songs.add(song);
 			}
         } finally {

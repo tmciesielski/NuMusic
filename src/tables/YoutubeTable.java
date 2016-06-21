@@ -1,4 +1,4 @@
-package tables;
+ package tables;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -15,7 +15,7 @@ public class YoutubeTable {
 		derbyConn = conn;
 	}
 	
-	public void addSong(String songName, String youtubeLink, String youtubeTitle) throws IOException, SQLException {
+	public void addSong(String songName, String youtubeLink, String youtubeTitle, int viewCount) throws IOException, SQLException {
 		Statement s = derbyConn.createStatement();
 		
 		songName = songName.replace("'", "''");
@@ -24,8 +24,8 @@ public class YoutubeTable {
 		// Add song if it doesn't exist
 		if(!songExists(songName)) {
 			System.out.println("Adding: "+youtubeTitle);
-			s.execute("insert into "+tableName+" (SONG_NAME, YOUTUBE_LINK, YOUTUBE_TITLE) values"
-					+  " ('"+songName+"', '"+youtubeLink+"', '"+youtubeTitle+"')");
+			s.execute("insert into "+tableName+" (SONG_NAME, YOUTUBE_LINK, YOUTUBE_TITLE, VIEW_COUNT) values"
+					+  " ('"+songName+"', '"+youtubeLink+"', '"+youtubeTitle+"', "+viewCount+")");
 			
 		// Else throw exception
 		} else {
@@ -55,17 +55,17 @@ public class YoutubeTable {
 		return false;
 	}
 	
-	public ArrayList<String> getLinks() throws SQLException {
-		ArrayList<String> songs = new ArrayList<String>();
+	public ArrayList<String[]> getLinks() throws SQLException {
+		ArrayList<String[]> songs = new ArrayList<String[]>();
 		ResultSet results;
 		Statement s = null;
 		
 		try {
 			s = derbyConn.createStatement();
-			results = s.executeQuery("select YOUTUBE_LINK from "+tableName);
+			results = s.executeQuery("select SONG_NAME, YOUTUBE_LINK, YOUTUBE_TITLE from "+tableName);
 			
 			while (results.next()) {
-				songs.add(results.getString(1));
+				songs.add(new String[] {results.getString(1), results.getString(2), results.getString(3)});
 			}
         } finally {
         	s.close();
