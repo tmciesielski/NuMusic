@@ -12,6 +12,8 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.firefox.internal.ProfilesIni;
 
 import tables.GarbageTable;
 import tables.ControlTable;
@@ -33,7 +35,7 @@ public class BpmTwitterScraper {
     	Date startDate = null;
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         //Date finalEndDate = sdf.parse("2011-02-04");
-        Scanner sc = new Scanner(System.in);
+        /*Scanner sc = new Scanner(System.in);
         System.out.println("This is the information for the end date (oldest date is Feb 4, 2011)");
         System.out.print("Enter month with the two digits (Ex. 01, 10, 30) : ");
         String monthInt = sc.nextLine().trim();
@@ -45,7 +47,9 @@ public class BpmTwitterScraper {
         String year = sc.nextLine().trim();
         
         startDate = sdf.parse(year + "-" + monthInt + "-" + day);
-        sc.close();
+        sc.close();*/
+        
+        startDate = sdf.parse("2016-06-01");
         
         // Set startDate as the first day to check tweets, moving forwards after each day
      	// Set endDate as yesterday, today's tweets won't finish until EOD
@@ -68,7 +72,7 @@ public class BpmTwitterScraper {
         	Date tempEndDate = null;
             c.add(Calendar.DATE, +1);
             tempEndDate = c.getTime();            
-            System.out.println(startDate.getDate());
+            System.out.println(startDate.toString());
             System.out.println("\nSearching between "+sdf.format(startDate)+" and "+sdf.format(tempEndDate));
 
             // Get control table dates to skip
@@ -94,7 +98,11 @@ public class BpmTwitterScraper {
             // Selenium has dependancy on firefox version
             // Selenium 2.53.0 compatible with firefox 45.0
             // https://ftp.mozilla.org/pub/firefox/releases/45.0/win64/en-US/
-            WebDriver driver = new FirefoxDriver();
+            ProfilesIni profile = new ProfilesIni();
+            FirefoxProfile ffprofile = profile.getProfile("SELENIUM");
+            ffprofile.setPreference("browser.startup.homepage_override.mstone", "ignore");
+            ffprofile.setPreference("startup.homepage_welcome_url.additional",  "about:blank");
+            WebDriver driver = new FirefoxDriver(ffprofile);
             boolean reachedBottom = false;
             String url = "https://twitter.com/search?f=realtime&q=from%3A"+xmChannel+
             		"%20since%3A"+sdf.format(startDate)+

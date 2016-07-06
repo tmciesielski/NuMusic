@@ -1,2 +1,2 @@
-cd c:\Derby_10\databases
-java -jar c:\Derby_10\lib\derbyrun.jar server start
+cd C:\Apache\derby\databases
+java -jar C:\Apache\derby\lib\derbyrun.jar server start

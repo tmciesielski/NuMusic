@@ -67,7 +67,7 @@ drop table APP.XM_SONGS
 truncate table APP.XM_SONGS
 
 /* sanity check after consolidation */
-select * from APP.RAW_XM_SONGS
+select count(*) from APP.RAW_XM_SONGS
 select sum(PLAY_COUNT) sum1 from APP.XM_SONGS
 select count(*) from APP.XM_SONGS
 
