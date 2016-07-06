@@ -5,6 +5,7 @@
 <title>PLAYLIST</title>
 <link type = "text/css" rel = "stylesheet" href = "Testing.css"/>
 <script>
+	var playlistNumber = 0;
 	var counter = 0;
 	var xhttp;
 	function loadPlaylist(){
@@ -63,7 +64,7 @@
 			counter = x.length - 1;
 		}
 		
-		for (var i = 0; i < x.length; i++) {
+		for (var i = playlistNumber; i < (playlistNumber + 15); i++) {
 			if (i == counter) {
 				table += "<tr><td class = 'tableDataOn'>"
 						+ x[i].getElementsByTagName("ID")[0].childNodes[0].nodeValue
@@ -85,6 +86,7 @@
 			}
 		}
 		
+		playlistNumber += 15;
 		var audio = document.getElementById("audioPlayer");
 		var source = document.getElementById("songName");
 		source.src = "music/1.mp3";
