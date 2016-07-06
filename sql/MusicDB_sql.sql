@@ -71,19 +71,22 @@ select count(*) from APP.RAW_XM_SONGS
 select sum(PLAY_COUNT) sum1 from APP.XM_SONGS
 select count(*) from APP.XM_SONGS
 
-
 /* PHASE 3 */
 create table APP.YOUTUBE_LINKS (
 ID integer not null generated always as identity (start with 1, increment by 1),
 SONG_NAME varchar(255), 
 YOUTUBE_LINK varchar(255),
 YOUTUBE_TITLE varchar(255),
+VIEW_COUNT integer,
+NEWEST_DATE timestamp,
+OLDEST_DATE timestamp,
+PLAY_COUNT int,
 unique (ID)
 )
 drop table APP.YOUTUBE_LINKS
 
 select * from APP.XM_SONGS order by PLAY_COUNT desc
-select * from APP.YOUTUBE_LINKS
+select * from APP.YOUTUBE_LINKS fetch next 10 rows only
 
 
 create table APP.PREF_EVENTS (
