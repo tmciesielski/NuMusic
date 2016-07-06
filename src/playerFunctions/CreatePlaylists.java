@@ -18,9 +18,12 @@ import database.MusicDB;
 public class CreatePlaylists {
 
 	// All playlist should be descending XM playcount modified by personal preference
-	public static Playlist createAllPlaylist () throws ClassNotFoundException, SQLException, ParseException {
-		ArrayList<PlaylistSong> playlist = new ArrayList<PlaylistSong>();
+	public static ArrayList<PlaylistSong> createAllPlaylist() throws ClassNotFoundException, SQLException, ParseException {
+		Playlist list = new Playlist();
+		ArrayList<PlaylistSong> playlist = list.getPlaylist(4, 4, 4, 4);
+		return playlist;
 		
+		/*
 		Connection conn = MusicDB.getConnection();
 		XmTable musicTable = new XmTable(conn);
 		PrefTable prefTable = new PrefTable(conn);
@@ -28,7 +31,7 @@ public class CreatePlaylists {
 		ArrayList<XmSong> songs = musicTable.getSongs();
 		
 		int listId = 0;
-		for(XmSong song : songs) {
+		for(PlaylistSong song : playlist) {
 			// give each song a number, modify it based on pref table
 			String songName = song.getSongName();
 			SongPref pref = prefTable.getSongPref(songName);
@@ -38,6 +41,7 @@ public class CreatePlaylists {
 			String youtubeLink = youtubeTable.getSongLink(songName);
 			
 			// add it to the playlist
+			
 			PlaylistSong pSong = new PlaylistSong();
 			pSong.setListId(listId);
 			pSong.setSongName(songName);
@@ -52,6 +56,7 @@ public class CreatePlaylists {
 		allPlaylist.setPlaylist(playlist);
 		
 		return allPlaylist;
+		*/
 	}
 	
 	public static int modListIdByPref (String songName, int listId, Connection conn) throws SQLException, ParseException {

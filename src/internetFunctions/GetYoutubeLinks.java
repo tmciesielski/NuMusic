@@ -54,10 +54,14 @@ public class GetYoutubeLinks {
 			searchString = searchString.replace(")", "%29");
 			searchString = searchString.replace("[", "%5B");
 			searchString = searchString.replace("]", "%5D");
-			
+			searchString = searchString.replace("Ü", "U");
+			searchString = searchString.replace("Larsson", "");
+			System.out.println(j);
 
+			
 			String youtube = "https://www.youtube.com/results?search_query=";
 			String url = youtube+searchString;
+			System.out.println(url);
 			
 			Document document = null;
 			try {
@@ -82,7 +86,7 @@ public class GetYoutubeLinks {
 				for (int i=0; i<results; i++) {
 					String link = currentData.get(i).attr("href");
 					String title = currentData.get(i).attr("title");
-					System.out.println(link);
+					//System.out.println(link);
 					if(link.contains("list")) {
 						k+=2;
 						System.out.println("ERROR: First Youtube link is a list of videos");
@@ -94,9 +98,10 @@ public class GetYoutubeLinks {
 					}
 					else {
 						Elements playCount = document.select("ul.yt-lockup-meta-info > li");
+						title = title.replace("?", "");
 						int stuff = Integer.parseInt(playCount.get(k).childNode(0).toString().replace(" views", "").replace(",", ""));
-						System.out.println(stuff);
-						youtubeTable.addSong(songName, link, title, stuff);
+						//System.out.println(stuff);
+						youtubeTable.addSong(songName, link, title, stuff, song.getNewestDate(), song.getOldestDate(), song.getPlayCount());
 						break;
 					}	
 				}

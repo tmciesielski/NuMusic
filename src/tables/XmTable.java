@@ -15,11 +15,17 @@ import objects.XmSong;
 public class XmTable {
 	private static Connection derbyConn = null;
 	private static String tableName = "XM_SONGS";
+	private int size;
 	
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss"); //12 hour
 	
-	public XmTable(Connection conn) {
+	public XmTable(Connection conn) throws SQLException {
 		derbyConn = conn;
+		Statement s = derbyConn.createStatement();
+		ResultSet results = s.executeQuery("select * from "+tableName);
+		while(results.next()) {
+		    size++;
+		}
 	}
 	
 	public void addSong(XmSong xmSong) throws IOException, SQLException {
@@ -94,5 +100,43 @@ public class XmTable {
         }
 		
 		return songs;
+	}
+	
+	public ArrayList<XmSong> getSpecificSongs(String option) throws SQLException, ParseException {
+		ArrayList<XmSong> songs = new ArrayList<XmSong>();
+		ResultSet results;
+		Statement s = null;
+		
+		try {
+			s = derbyConn.createStatement();
+			//* has id, artist, title, song, newest, oldest, count
+			results = s.executeQuery("select * from "+tableName+" order by " + option + " FETCH NEXT " + (int)Math.floor(size * .1) + " ROWS ONLY");
+			while (results.next()) {
+				XmSong song = new XmSong(results.getString(2), results.getString(3), results.getString(4), sdf.parse(results.getString(5)), 
+						sdf.parse(results.getString(6)), Integer.parseInt(results.getString(7)));
+				songs.add(song);
+			}
+        } finally {
+        	s.close();
+        }
+		
+		return songs;
+	}
+	
+	public String getSize() throws SQLException{
+		Statement s = null;
+		int i = 0;
+		try {
+			derbyConn.createStatement();
+			ResultSet results = s.executeQuery("select * from "+tableName);
+			i = 0;
+			while(results.next()) {
+			    i++;
+			}
+		} finally {
+        	s.close();
+        }
+		
+		return i + "";
 	}
 }

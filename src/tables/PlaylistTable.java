@@ -12,14 +12,14 @@ import java.util.Date;
 
 import objects.XmSong;
 
-public class YoutubeTable {
+public class PlaylistTable {
 	private static Connection derbyConn = null;
 	private static String tableName = "YOUTUBE_LINKS";
 	private int size;
 	
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss"); //12 hour
 	
-	public YoutubeTable(Connection conn) throws SQLException {		
+	public PlaylistTable(Connection conn) throws SQLException {		
 		derbyConn = conn;
 		Statement s = derbyConn.createStatement();
 		ResultSet results = s.executeQuery("select * from "+tableName);

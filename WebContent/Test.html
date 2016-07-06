@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>PLAYLIST</title>
+<link type = "text/css" rel = "stylesheet" href = "Testing.css"/>
+<script>
+	var counter = 0;
+	var xhttp;
+	function loadPlaylist(){
+		var xhttpCreate = new XMLHttpRequest();
+		document.getElementById("output").style.visibility='hidden' 
+		document.getElementById("testing").innerHTML = "creating new playlist...";
+		document.getElementById("artist").innerHTML = "Artist Name:";
+		document.getElementById("title").innerHTML = "Song Name:";
+		var audio = document.getElementById("audioPlayer");
+		var source = document.getElementById("songName");
+		source.src = "";
+		audio.load();
+		xhttpCreate.open("GET", "GetPlaylist", true);
+		xhttpCreate.send();
+		xhttpCreate.onreadystatechange = function() {
+			if (xhttpCreate.readyState == 4 && xhttpCreate.status == 200) {
+				document.getElementById("testing").innerHTML = xhttpCreate.responseText;
+			}
+		};	
+	}
+	
+	function loadDoc(next) {
+		document.getElementById("output").style.visibility='visible' 
+		//document.getElementById("songName").src = "music/1.mp3";
+		xhttp = new XMLHttpRequest();
+		xhttp.open("POST", "music.xml", true);
+		xhttp.send();
+		xhttp.onreadystatechange = function() {
+			//document.getElementById("working").innerHTML = xhttp.status;
+			if (xhttp.readyState == 4 && xhttp.status == 200) {
+				document.getElementById("testing").innerHTML = "displaying the playlist";
+				myFunction(xhttp, next);
+			}
+		};	
+	}
+		
+	function myFunction(xml, nextResult) {
+		if(nextResult === "up"){
+			counter += 1;
+		}
+		else if(nextResult === "down"){
+			counter += -1;
+		}
+		else{
+			counter = 0;
+		}
+		
+		var xmlDoc = xml.responseXML;
+		var table = "<tr><th style:'text-align: center; padding: 10px'>Song Number</th><th style:'text-align: center; padding: 10px'>Artist</th><th style:'text-align: center; padding: 10px'>Title</th></tr>";
+		var x = xmlDoc.getElementsByTagName("SONG");
+		
+		if(counter === x.length){
+			counter = 0;
+		}
+		else if(counter === -1){
+			counter = x.length - 1;
+		}
+		
+		for (var i = 0; i < x.length; i++) {
+			if (i == counter) {
+				table += "<tr><td class = 'tableDataOn'>"
+						+ x[i].getElementsByTagName("ID")[0].childNodes[0].nodeValue
+						+ "</td><td class = 'tableDataSongOn'>"
+						+ x[i].getElementsByTagName("ARTIST_NAME")[0].childNodes[0].nodeValue
+						+ "</td><td class = 'tableDataSongOn'>"
+						+ x[i].getElementsByTagName("SONG_NAME")[0].childNodes[0].nodeValue
+						+ "</td></tr>";
+				document.getElementById("artist").innerHTML = "Artist Name:    " + x[i].getElementsByTagName("ARTIST_NAME")[0].childNodes[0].nodeValue;
+				document.getElementById("title").innerHTML =  "Song Name:      " + x[i].getElementsByTagName("SONG_NAME")[0].childNodes[0].nodeValue;
+			} else {
+				table += "<tr><td class = 'tableData'>"
+						+ x[i].getElementsByTagName("ID")[0].childNodes[0].nodeValue
+						+ "</td><td class = 'tableDataSong'>"
+						+ x[i].getElementsByTagName("ARTIST_NAME")[0].childNodes[0].nodeValue
+						+ "</td><td class = 'tableDataSong'>"
+						+ x[i].getElementsByTagName("SONG_NAME")[0].childNodes[0].nodeValue
+						+ "</td></tr>";
+			}
+		}
+		
+		var audio = document.getElementById("audioPlayer");
+		var source = document.getElementById("songName");
+		source.src = "music/1.mp3";
+		audio.load();
+		//document.getElementById("tableLength").innerHTML = x.length;
+		//document.getElementById("counter").innerHTML = counter;
+		document.getElementById("output").innerHTML = table;
+	}
+</script>
+</head>
+<body>
+	<button id = "begin" onClick = "loadPlaylist()">Create the Playlist!</button>
+	<button id = "clickable" onClick = "loadDoc('')">Load up the Playlist!</button> 
+	<script>
+	var clickable = document.getElementById("clickable");
+	clickable.onmouseover = function(){
+		this.style.backgroundColor = "green";
+	};
+	clickable.onmouseout = function() {
+	    this.style.backgroundColor = '';
+	};
+	</script>
+	<p id = "testing">testing</p>
+	<p> </p>
+	<button id = "previous" onClick = "loadDoc('down')">Previous</button> 
+	<button id = "next" onClick = "loadDoc('up')">Next</button> 
+	<p> </p>
+	<div id = 'tableDisplay'>
+		<table border = 10px id='output'></table>
+		<div id='right'>
+			<div id="playlist">Playlist</div>
+			<div id="stage">
+				<div id="artist" style="padding: 10px">Artist Name: </div>
+				<div id="title" style="padding: 10px">Song Name: </div>
+				<audio id="audioPlayer" style="padding: 10px" controls>
+					<source id="songName" src="" type="audio/mpeg">
+					Your browser does not support the audio element.
+					</source>
+				</audio>
+			</div>		
+		</div>
+	</div>	
+</body>
+</html>

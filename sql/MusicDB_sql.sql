@@ -67,7 +67,7 @@ drop table APP.XM_SONGS
 truncate table APP.XM_SONGS
 
 /* sanity check after consolidation */
-select count(*) from APP.RAW_XM_SONGS
+select * from APP.RAW_XM_SONGS
 select sum(PLAY_COUNT) sum1 from APP.XM_SONGS
 select count(*) from APP.XM_SONGS
 
@@ -86,14 +86,22 @@ select * from APP.XM_SONGS order by PLAY_COUNT desc
 select * from APP.YOUTUBE_LINKS
 
 
-create table APP.PREF (
-SONG_NAME varchar(255), 
-PLAY_DATE timestamp, 
+create table APP.PREF_EVENTS (
+EVENT_TIME timestamp,
+PLAY_DATE timestamp,
+EVENT_NAME varchar(255),
+SONG varchar(255), 
+ARTIST varchar(255),
+PLAYLIST_NUM int,
+LISTENED_NUM int,
 PLUS int, 
-MINUS int,
-UPVOTE int,
-DOWNVOTE int,
-PLAY_COUNT int,
+MINUS int, 
+LISTENED_AMT double, 
+DURATION double, 
+WEIGHT int, 
+UPVOTE int, 
+DOWNVOTE int, 
+PLAY_COUNT int, 
 TAG varchar(255)
 )
 

@@ -34,7 +34,7 @@ public class FillMusicTable {
 			// create new xmSong for the 1st instance
 			// edge case that only occurs once
 			if(songs.indexOf(song) == 0) {
-				xmSong = new XmSong(currSong, artist, title, currDate, currDate, 1);
+				xmSong = new XmSong(artist, title, currSong, currDate, currDate, 1);
 				
 			// compare subsequent song names to the current xmSong
 			// if it's the same song name
@@ -48,7 +48,7 @@ public class FillMusicTable {
 				xmTable.addSong(xmSong);
 				
 				// start incrementing a new xmSong
-				xmSong = new XmSong(currSong, artist, title, currDate, currDate, 1);
+				xmSong = new XmSong(artist, title, currSong, currDate, currDate, 1);
 			}
 			
 			// if it's the last song, add the current xmSong
