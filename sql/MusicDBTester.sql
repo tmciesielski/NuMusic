@@ -52,6 +52,21 @@ PLAY_COUNT int,
 unique (ID)
 )
 
+create table APP.PLAYLIST_SONGS (
+ID integer not null generated always as identity (start with 1, increment by 1),
+SONG_NAME varchar(255), 
+YOUTUBE_LINK varchar(255),
+YOUTUBE_TITLE varchar(255),
+VIEW_COUNT integer,
+NEWEST_DATE timestamp,
+OLDEST_DATE timestamp,
+PLAY_COUNT int,
+unique (ID)
+)
+
+select * from APP.PLAYLIST_SONGS
+
+drop table APP.PLAYLIST_SONGS 
 drop table APP.YOUTUBE_LINKS
 
 delete FROM APP.YOUTUBE_LINKS WHERE ID > 1

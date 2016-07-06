@@ -17,6 +17,7 @@ public class YoutubeTable {
 	private static String tableName = "YOUTUBE_LINKS";
 	private int size;
 	
+	PlaylistTable playlistTable;
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss"); //12 hour
 	
 	public YoutubeTable(Connection conn) throws SQLException {		
@@ -26,6 +27,7 @@ public class YoutubeTable {
 		while(results.next()) {
 		    size++;
 		}
+		playlistTable = new PlaylistTable(derbyConn);
 	}
 	
 	public void addSong(String songName, String youtubeLink, String youtubeTitle, int viewCount, Date newestDate, Date oldestDate, int playCount) throws IOException, SQLException {
@@ -114,14 +116,31 @@ public class YoutubeTable {
 		try {
 			s = derbyConn.createStatement();
 			//* has id, artist, title, song, newest, oldest, count
-			results = s.executeQuery("select SONG_NAME, YOUTUBE_LINK, PLAY_COUNT from "+tableName+" order by " + option + " FETCH NEXT " + (int)Math.floor(size * .1) + " ROWS ONLY");
+			results = s.executeQuery("select ID, SONG_NAME, YOUTUBE_LINK, PLAY_COUNT from "+tableName+" order by " + option + " FETCH NEXT " + (int)Math.floor(size * .1) + " ROWS ONLY");
 			while (results.next()) {
-				songs.add(new String[] {results.getString(1), results.getString(2), results.getString(3)});
+				songs.add(new String[] {results.getString(1), results.getString(2), results.getString(3), results.getString(4)});
 			}
         } finally {
         	s.close();
         }
 		
 		return songs;
+	}
+
+	public void getAllSongsToAddToPlaylistTable() throws SQLException, NumberFormatException, IOException, ParseException {
+		ArrayList<String[]> songs = new ArrayList<String[]>();
+		ResultSet results;
+		Statement s = null;
+		
+		try {
+			s = derbyConn.createStatement();
+			results = s.executeQuery("select SONG_NAME, YOUTUBE_LINK, YOUTUBE_TITLE, VIEW_COUNT, NEWEST_DATE, OLDEST_DATE, PLAY_COUNT from "+tableName);
+			
+			while (results.next()) {
+				playlistTable.addSong(results.getString(1), results.getString(2), results.getString(3), Integer.parseInt(results.getString(4)), sdf.parse(results.getString(5)), sdf.parse(results.getString(6)), Integer.parseInt(results.getString(7)));
+			}
+        } finally {
+        	s.close();
+        }
 	}
 }

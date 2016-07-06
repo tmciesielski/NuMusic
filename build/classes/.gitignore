@@ -1,8 +1,7 @@
-/database/
-/executable/
 /internetFunctions/
+/tables/
+/servlets/
+/executable/
 /objects/
 /playerFunctions/
-/servlets/
-/tables/
 /test/

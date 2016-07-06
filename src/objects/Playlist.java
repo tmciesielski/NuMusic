@@ -22,33 +22,40 @@ import org.w3c.dom.Element;
 
 import database.MusicDB;
 import tables.XmTable;
-import tables.YoutubeTable;
+import tables.PlaylistTable;
 
 public class Playlist {
-	private ArrayList<PlaylistSong> playlist = new ArrayList<PlaylistSong>();
-
-	public ArrayList<PlaylistSong> getPlaylist(int count, int newDate, int oldDate, int random) throws ClassNotFoundException, SQLException, ParseException {
+	private ArrayList<ArrayList<PlaylistSong>> playlist = new ArrayList<ArrayList<PlaylistSong>>();
+	private ArrayList<PlaylistSong> singlePlaylist = new ArrayList<PlaylistSong>();
+	
+	public ArrayList<ArrayList<PlaylistSong>> getPlaylist(int count, int newDate, int random) throws ClassNotFoundException, SQLException, ParseException {
 		Connection conn = MusicDB.getConnection();
-		YoutubeTable youtubeTable = new YoutubeTable(conn);
+		PlaylistTable playlistTable = new PlaylistTable(conn);
 		//PlaylistTable playlistTable = new PlaylistTable(conn);
 		
 		//SONG_NAME, YOUTUBE_LINK, PLAY_COUNT in the string array
-		ArrayList<String[]> songsByCount = youtubeTable.getSpecificSongs("PLAY_COUNT DESC");
-		ArrayList<String[]> songsByNewDate = youtubeTable.getSpecificSongs("NEWEST_DATE DESC");
-		ArrayList<String[]> songsByOldDate = youtubeTable.getSpecificSongs("NEWEST_DATE ASC");
-		ArrayList<String[]> songsByRandom = youtubeTable.getSpecificSongs("RANDOM()");
+		ArrayList<String[]> songsByCount = playlistTable.getSpecificSongs("PLAY_COUNT DESC");
+		ArrayList<String[]> songsByNewDate = playlistTable.getSpecificSongs("NEWEST_DATE DESC");
+		ArrayList<String[]> songsByRandom = playlistTable.getSpecificSongs("RANDOM()");
 		
 		addSongs(songsByCount, count);
 		addSongs(songsByNewDate, newDate);
-		addSongs(songsByOldDate, oldDate);
 		addSongs(songsByRandom, random);
 		
+		Collections.sort(singlePlaylist);
+		for(int i = 1; i <= singlePlaylist.size(); i++){
+			singlePlaylist.get(i - 1).setListId(i);
+		}
+		playlist.add(singlePlaylist);
+		singlePlaylist = new ArrayList<PlaylistSong>();
 		return playlist;
 	}
 	
 	
 	
-	public void addSongs(ArrayList<String[]> songsToAdd, int number){
+	public void addSongs(ArrayList<String[]> songsToAdd, int number) throws SQLException, ClassNotFoundException{
+		Connection conn = MusicDB.getConnection();
+		PlaylistTable playlistTable = new PlaylistTable(conn);
 		ArrayList<Integer> numbers = new ArrayList<Integer>();     
 		for(int i = 0; i < songsToAdd.size(); i++){       
 			numbers.add(i);     
@@ -56,25 +63,18 @@ public class Playlist {
 		Collections.shuffle(numbers);
 		for(int i = 0; i < number; i++){
 			String[] song = songsToAdd.get(numbers.get(i));
-			PlaylistSong playlistSong = new PlaylistSong(song[0], song[1], Integer.parseInt(song[2]));
-			if(!playlist.contains(playlistSong)){
-				playlist.add(playlistSong);
+			PlaylistSong playlistSong = new PlaylistSong(song[1], song[2], Integer.parseInt(song[3]));
+			if(!singlePlaylist.contains(playlistSong)){
+				playlistTable.removeSong(song[0]);
+				singlePlaylist.add(playlistSong);
 			}
 			else{
 				number++;
 			}
 		}
-		Collections.sort(playlist);
-		for(int i = 1; i <= playlist.size(); i++){
-			playlist.get(i - 1).setListId(i);
-		}
-	}
-
-	public void setPlaylist(ArrayList<PlaylistSong> playlist) {
-		this.playlist = playlist;
 	}
 	
-	public Document toXML(ArrayList<PlaylistSong> playlist) throws ParserConfigurationException, TransformerException {
+	public Document toXML(ArrayList<ArrayList<PlaylistSong>> playlistSongs) throws ParserConfigurationException, TransformerException {
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
@@ -83,47 +83,49 @@ public class Playlist {
 		Element rootElement = xmlDoc.createElement("PLAYLIST");
 		xmlDoc.appendChild(rootElement);
 		
-		for(PlaylistSong song : playlist) {
-			String songName = song.getSongName();
-			songName.replace("A-Trak", "A Trak");
-			songName.replace("Ne-Yo", "Ne Yo");
-			songName.replace("C-Ro", "C Ro");
-			songName.replace("Blink-182", "Blink 182");
-			songName.replace("Keys-N-Crates", "Keys N Crates");
-						
-			String[] split = song.getSongName().split("-");
-			
-			String artist = split[0].trim();
-			String title = split[1].trim();
-			// song element
-			Element songElement = xmlDoc.createElement("SONG");
-			rootElement.appendChild(songElement);
-			
-			// song id node
-			Element idNode = xmlDoc.createElement("ID");
-			idNode.appendChild(xmlDoc.createTextNode(Integer.toString(song.getListId())));
-			songElement.appendChild(idNode);
-			
-			// song artist name node
-			Element artistNameNode = xmlDoc.createElement("ARTIST_NAME");
-			artistNameNode.appendChild(xmlDoc.createTextNode(artist));
-			songElement.appendChild(artistNameNode);
-			
-			// song song name node
-			Element songNameNode = xmlDoc.createElement("SONG_NAME");
-			songNameNode.appendChild(xmlDoc.createTextNode(title));
-			songElement.appendChild(songNameNode);
-			
-			// song id node
-			Element linkNode = xmlDoc.createElement("YOUTUBE_LINK");
-			linkNode.appendChild(xmlDoc.createTextNode(song.getYoutubeLink()));
-			songElement.appendChild(linkNode);
+		for(ArrayList<PlaylistSong> songList : playlistSongs) {
+			for(PlaylistSong song: songList){
+				String songName = song.getSongName();
+				songName.replace("A-Trak", "A Trak");
+				songName.replace("Ne-Yo", "Ne Yo");
+				songName.replace("C-Ro", "C Ro");
+				songName.replace("Blink-182", "Blink 182");
+				songName.replace("Keys-N-Crates", "Keys N Crates");
+							
+				String[] split = song.getSongName().split("-");
+				
+				String artist = split[0].trim();
+				String title = split[1].trim();
+				// song element
+				Element songElement = xmlDoc.createElement("SONG");
+				rootElement.appendChild(songElement);
+				
+				// song id node
+				Element idNode = xmlDoc.createElement("ID");
+				idNode.appendChild(xmlDoc.createTextNode(Integer.toString(song.getListId())));
+				songElement.appendChild(idNode);
+				
+				// song artist name node
+				Element artistNameNode = xmlDoc.createElement("ARTIST_NAME");
+				artistNameNode.appendChild(xmlDoc.createTextNode(artist));
+				songElement.appendChild(artistNameNode);
+				
+				// song song name node
+				Element songNameNode = xmlDoc.createElement("SONG_NAME");
+				songNameNode.appendChild(xmlDoc.createTextNode(title));
+				songElement.appendChild(songNameNode);
+				
+				// song id node
+				Element linkNode = xmlDoc.createElement("YOUTUBE_LINK");
+				linkNode.appendChild(xmlDoc.createTextNode(song.getYoutubeLink()));
+				songElement.appendChild(linkNode);
+			}
 		}
 		
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		Transformer transformer = transformerFactory.newTransformer();
 		DOMSource source = new DOMSource(xmlDoc);
-		StreamResult result = new StreamResult(new File("C:\\College\\Freshmen Summer\\music.xml"));
+		StreamResult result = new StreamResult(new File("C://College//FreshmenSummer//NuMusic//WebContent//music.xml"));
 		
 		transformer.transform(source, result);
 

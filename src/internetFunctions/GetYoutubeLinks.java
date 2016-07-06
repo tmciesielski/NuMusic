@@ -11,6 +11,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import tables.PlaylistTable;
 import tables.XmTable;
 import tables.YoutubeTable;
 import database.MusicDB;
@@ -22,6 +24,7 @@ public class GetYoutubeLinks {
 		Connection conn = MusicDB.getConnection();
 		XmTable musicTable = new XmTable(conn);
 		YoutubeTable youtubeTable = new YoutubeTable(conn);
+		PlaylistTable playlistTable = new PlaylistTable(conn);
 		ArrayList<XmSong> songs = musicTable.getSongs();
 		int j = 1;
 		for(XmSong song : songs) {
@@ -102,6 +105,7 @@ public class GetYoutubeLinks {
 						int stuff = Integer.parseInt(playCount.get(k).childNode(0).toString().replace(" views", "").replace(",", ""));
 						//System.out.println(stuff);
 						youtubeTable.addSong(songName, link, title, stuff, song.getNewestDate(), song.getOldestDate(), song.getPlayCount());
+						playlistTable.addSong(songName, link, title, stuff, song.getNewestDate(), song.getOldestDate(), song.getPlayCount());
 						break;
 					}	
 				}

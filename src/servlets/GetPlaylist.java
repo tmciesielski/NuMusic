@@ -45,11 +45,10 @@ public class GetPlaylist extends HttpServlet {
 		response.setContentType("text/html");
 		PrintWriter out = response.getWriter();
 		Playlist playlist = new Playlist();
-		ArrayList<PlaylistSong> songs = new ArrayList<PlaylistSong>();
+		ArrayList<ArrayList<PlaylistSong>> songs = new ArrayList<ArrayList<PlaylistSong>>();
 		try {
-			songs = playlist.getPlaylist(4, 4, 4, 4);
-			for(PlaylistSong song : songs){
-				System.out.println(song.getSongName());
+			for(int i = 0; i < 15; i++){
+				songs = playlist.getPlaylist(4, 4, 7);
 			}
 		} catch (ClassNotFoundException | SQLException | ParseException e) {
 			// TODO Auto-generated catch block
