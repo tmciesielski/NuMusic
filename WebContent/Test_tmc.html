@@ -27,7 +27,7 @@
 	}
 	
 	function loadDoc(next) {
-		document.getElementById("output").style.visibility='visible' 
+		document.getElementById("output").style.visibility='visible';
 		//document.getElementById("songName").src = "music/1.mp3";
 		xhttp = new XMLHttpRequest();
 		xhttp.open("POST", "music.xml", true);
@@ -117,7 +117,7 @@
 	<button id = "next" onClick = "loadDoc('up')">Next</button> 
 	<p> </p>
 	<div id = 'tableDisplay'>
-		<table border = 10px id='output'></table>
+		<table id='output' border=10px></table>
 		<div id='right'>
 			<div id="playlist">Playlist</div>
 			<div id="stage">

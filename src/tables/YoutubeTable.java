@@ -124,4 +124,23 @@ public class YoutubeTable {
 		
 		return songs;
 	}
+	
+	public ArrayList<String[]> getTestSongs(String option) throws SQLException, ParseException {
+		ArrayList<String[]> songs = new ArrayList<String[]>();
+		ResultSet results;
+		Statement s = null;
+		
+		try {
+			s = derbyConn.createStatement();
+			//* has id, artist, title, song, newest, oldest, count
+			results = s.executeQuery("select SONG_NAME, YOUTUBE_LINK, PLAY_COUNT from "+tableName+" fetch next 15 rows only");
+			while (results.next()) {
+				songs.add(new String[] {results.getString(1), results.getString(2), results.getString(3)});
+			}
+        } finally {
+        	s.close();
+        }
+		
+		return songs;
+	}
 }

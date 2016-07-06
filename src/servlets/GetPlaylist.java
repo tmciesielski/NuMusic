@@ -47,7 +47,7 @@ public class GetPlaylist extends HttpServlet {
 		Playlist playlist = new Playlist();
 		ArrayList<PlaylistSong> songs = new ArrayList<PlaylistSong>();
 		try {
-			songs = playlist.getPlaylist(4, 4, 4, 4);
+			songs = playlist.getPlaylist(15, 4, 4, 4);
 			for(PlaylistSong song : songs){
 				System.out.println(song.getSongName());
 			}

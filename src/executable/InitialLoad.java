@@ -13,13 +13,13 @@ public class InitialLoad {
 		//BpmTwitterScraper.initialLoad();
 		
 		// XM play Count consolidater [done]
-		FillMusicTable.consolidateSongInstances();
+		//FillMusicTable.consolidateSongInstances();
 		
 		// Song name to Youtube converter [done]
 		//GetYoutubeLinks.convertSongNames();
 		
 		// Youtube song downloader [testing]
-		//YoutubeToMp3.downloadSongs();
+		YoutubeToMp3.downloadSongs();
 		
 		// Ranked playlist creator [testing]
 

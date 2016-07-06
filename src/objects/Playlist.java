@@ -33,15 +33,14 @@ public class Playlist {
 		//PlaylistTable playlistTable = new PlaylistTable(conn);
 		
 		//SONG_NAME, YOUTUBE_LINK, PLAY_COUNT in the string array
-		ArrayList<String[]> songsByCount = youtubeTable.getSpecificSongs("PLAY_COUNT DESC");
+		/*ArrayList<String[]> songsByCount = youtubeTable.getSpecificSongs("PLAY_COUNT DESC");
 		ArrayList<String[]> songsByNewDate = youtubeTable.getSpecificSongs("NEWEST_DATE DESC");
 		ArrayList<String[]> songsByOldDate = youtubeTable.getSpecificSongs("NEWEST_DATE ASC");
-		ArrayList<String[]> songsByRandom = youtubeTable.getSpecificSongs("RANDOM()");
+		ArrayList<String[]> songsByRandom = youtubeTable.getSpecificSongs("RANDOM()");*/
+		
+		ArrayList<String[]> songsByCount = youtubeTable.getTestSongs("PLAY_COUNT DESC");
 		
 		addSongs(songsByCount, count);
-		addSongs(songsByNewDate, newDate);
-		addSongs(songsByOldDate, oldDate);
-		addSongs(songsByRandom, random);
 		
 		return playlist;
 	}
@@ -123,7 +122,7 @@ public class Playlist {
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		Transformer transformer = transformerFactory.newTransformer();
 		DOMSource source = new DOMSource(xmlDoc);
-		StreamResult result = new StreamResult(new File("C:\\College\\Freshmen Summer\\music.xml"));
+		StreamResult result = new StreamResult(new File("C:\\Eclipse\\workspace\\NuMusic\\music.xml"));
 		
 		transformer.transform(source, result);
 

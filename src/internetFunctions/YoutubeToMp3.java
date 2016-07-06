@@ -13,6 +13,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.firefox.internal.ProfilesIni;
 
 import database.MusicDB;
 import tables.YoutubeTable;
@@ -24,16 +25,19 @@ public class YoutubeToMp3 {
 		Connection conn = MusicDB.getConnection();
 		YoutubeTable youtubeTable = new YoutubeTable(conn);
 		ArrayList<String[]> youtubeLinks = youtubeTable.getLinks();
-		String downloadDir = "C:\\College\\Freshmen Summer\\Music";
+		String downloadDir = "C:\\Music";
 
 		// Set the firefox profile settings
-		FirefoxProfile profile = new FirefoxProfile();
-		profile.setPreference("browser.download.dir", downloadDir);
-		profile.setPreference("browser.download.folderList", 2);
-		profile.setPreference("browser.download.manager.showWhenStarting", false);
-		profile.setPreference("browser.download.manager.showAlertOnComplete", false);
-		profile.setPreference("browser.helperApps.neverAsk.saveToDisk", "audio/mp3");
-		profile.setPreference("browser.helperApps.neverAsk.saveToDisk", "audio/mpeg");		
+		ProfilesIni profile = new ProfilesIni();
+        FirefoxProfile ffprofile = profile.getProfile("SELENIUM");
+        ffprofile.setPreference("browser.startup.homepage_override.mstone", "ignore");
+        ffprofile.setPreference("startup.homepage_welcome_url.additional",  "about:blank");
+        ffprofile.setPreference("browser.download.dir", downloadDir);
+        ffprofile.setPreference("browser.download.folderList", 2);
+        ffprofile.setPreference("browser.download.manager.showWhenStarting", false);
+        ffprofile.setPreference("browser.download.manager.showAlertOnComplete", false);
+        ffprofile.setPreference("browser.helperApps.neverAsk.saveToDisk", "audio/mp3");
+        ffprofile.setPreference("browser.helperApps.neverAsk.saveToDisk", "audio/mpeg");		
 
 		for(String[] youtubeLinkWithSongAndLink : youtubeLinks) {
 			int downloadNumber = youtubeLinks.indexOf(youtubeLinkWithSongAndLink) + 1;
@@ -44,7 +48,7 @@ public class YoutubeToMp3 {
 //				continue;
 //			}
 			// Open a firefox page to twitter search page
-			WebDriver driver = new FirefoxDriver(profile);
+			WebDriver driver = new FirefoxDriver(ffprofile);
 			String url = "http://www.youtube-mp3.org/";
 			driver.get(url);
 	
