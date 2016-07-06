@@ -1,5 +1,6 @@
 package test;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -29,6 +30,7 @@ public class Tester {
 	public static void main(String[] args) throws ClassNotFoundException, SQLException, IOException, ParseException, ParserConfigurationException, TransformerException {
 		Playlist playlist = new Playlist();
 		ArrayList<PlaylistSong> songs = playlist.getPlaylist(4, 4, 4, 4);
+		System.out.println("Working?");
 		playlist.toXML(songs);
 	}
 
