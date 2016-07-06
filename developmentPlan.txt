@@ -1,9 +1,10 @@
 ** Development Plan for Nu Music **
 Github Cheatsheet (http://rogerdudler.github.io/git-guide/)
 	git clone /path/to/repository
+	git checkout tmcBranch
 	git add *
 	git commit -m "Commit message"
-	git checkout master
+	git push origin master
 
 Component List
 	- XM twitter scraper [done]
