@@ -1,4 +1,10 @@
 @CHARSET "ISO-8859-1";
+tr:hover{
+  cursor: pointer;
+  background-color: #ccc;
+}
+
+
 .tableData{
 	text-align: center;
 	padding: 15px;
@@ -58,5 +64,5 @@
 	border: 2px solid #00CCFF;
 	margin-left: 20px;
 	margin-right: 20px;
-	padding-left: 20px;
+	padding: 20px;
 }

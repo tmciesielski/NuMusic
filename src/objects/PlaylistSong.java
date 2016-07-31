@@ -1,5 +1,6 @@
 package objects;
 
+//this object is used for obtaining the playlistsongs used in the playlist object class
 public class PlaylistSong implements Comparable<PlaylistSong>{
 	private int listId;
 	private String songName;
@@ -16,22 +17,28 @@ public class PlaylistSong implements Comparable<PlaylistSong>{
 	public int getPlayCount() {
 		return playCount;
 	}
+	
 	public int getListId() {
 		return listId;
 	}
+	
 	public void setListId(int listId) {
 		played = true;
 		this.listId = listId;
 	}
+	
 	public String getSongName() {
 		return songName;
 	}
+	
 	public void setSongName(String songName) {
 		this.songName = songName;
 	}
+	
 	public String getYoutubeLink() {
 		return youtubeLink;
 	}
+	
 	public void setYoutubeLink(String youtubeLink) {
 		this.youtubeLink = youtubeLink;
 	}
@@ -41,6 +48,7 @@ public class PlaylistSong implements Comparable<PlaylistSong>{
 	}
 	
 	@Override
+	//this compareTo method lists by the counters but if the same, organizes by the id's given
 	public int compareTo(PlaylistSong compareSong) {
 		if(!played){
 			int comparePlayCount = compareSong.getPlayCount();
@@ -55,6 +63,7 @@ public class PlaylistSong implements Comparable<PlaylistSong>{
 	}	
 	
 	@Override
+	//this equals method is used to check whether or not the song names are the same
 	public boolean equals(Object object){
 		boolean result = false;
 		if(object == null || object.getClass() != getClass()){

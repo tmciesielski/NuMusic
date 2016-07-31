@@ -19,8 +19,11 @@ import java.util.ArrayList;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import database.MusicDB;
 import objects.Playlist;
 import objects.PlaylistSong;
+import tables.PlaylistTable;
+import tables.YoutubeTable;
 
 /**
  * Servlet implementation class GetPlaylist
@@ -46,10 +49,32 @@ public class GetPlaylist extends HttpServlet {
 		PrintWriter out = response.getWriter();
 		Playlist playlist = new Playlist();
 		ArrayList<ArrayList<PlaylistSong>> songs = new ArrayList<ArrayList<PlaylistSong>>();
+		int size = 0;
+		
+		Connection conn;
 		try {
-			for(int i = 0; i < 15; i++){
+			conn = MusicDB.getConnection();
+			PlaylistTable playlistTable = new PlaylistTable(conn);
+			if(playlistTable.getSize() < 150){
+				YoutubeTable youtubeTable = new YoutubeTable(conn);
+				youtubeTable.getAllSongsToAddToPlaylistTable();
+			}
+		} catch (ClassNotFoundException | SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		try {
+			for(int i = 0; i < 5; i++){
 				songs = playlist.getPlaylist(4, 4, 7);
 			}
+			size = songs.size();
 		} catch (ClassNotFoundException | SQLException | ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -59,6 +84,12 @@ public class GetPlaylist extends HttpServlet {
 		} catch (ParserConfigurationException | TransformerException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		try {
 			Thread.sleep(5000);
@@ -66,6 +97,7 @@ public class GetPlaylist extends HttpServlet {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		out.println("created new playlist!");
+		
+		out.println(size);
 	}
 }

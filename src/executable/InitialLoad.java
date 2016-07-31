@@ -10,16 +10,16 @@ public class InitialLoad {
 	public static void main(String[] args) throws Exception {
 		
 		// XM twitter scraper [done]
-		//BpmTwitterScraper.initialLoad();
+		//BpmTwitterScraper.initialLoad(0, 0, 0);
 		
 		// XM play Count consolidater [done]
 		//FillMusicTable.consolidateSongInstances();
 		
 		// Song name to Youtube converter [done]
-		GetYoutubeLinks.convertSongNames();
+		//GetYoutubeLinks.convertSongNames(0);
 		
 		// Youtube song downloader [testing]
-		//YoutubeToMp3.downloadSongs();
+		//YoutubeToMp3.downloadSongs(0);
 		
 		// Ranked playlist creator [testing]
 

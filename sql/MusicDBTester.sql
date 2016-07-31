@@ -53,7 +53,7 @@ unique (ID)
 )
 
 create table APP.PLAYLIST_SONGS (
-ID integer not null generated always as identity (start with 1, increment by 1),
+ID integer,
 SONG_NAME varchar(255), 
 YOUTUBE_LINK varchar(255),
 YOUTUBE_TITLE varchar(255),
@@ -61,20 +61,74 @@ VIEW_COUNT integer,
 NEWEST_DATE timestamp,
 OLDEST_DATE timestamp,
 PLAY_COUNT int,
-unique (ID)
 )
 
+create table APP.PREF_EVENTS (
+EVENT_TIME timestamp,
+PLAY_DATE timestamp,
+EVENT_NAME varchar(255),
+SONG varchar(255), 
+ARTIST varchar(255),
+PLAYLIST_NUM int,
+LISTENED_NUM int,
+PLUS int, 
+MINUS int, 
+LISTENED_AMT double, 
+DURATION double, 
+WEIGHT int, 
+UPVOTE int,
+DOWNVOTE int, 
+PLAY_COUNT int,
+TAG varchar(255)
+)
+
+create table APP.PREF_EVENTS (
+SONG varchar(255), 
+LISTENED_AMT double, 
+DURATION double, 
+UPVOTE int,
+DOWNVOTE int,
+EVENT varchar(255)
+)
+
+create table APP.PREF_EVENTS_DISPLAYED (
+SONG varchar(255), 
+TOTAL_LISTENED double, 
+UPVOTE int,
+DOWNVOTE int,
+RATING int
+)
+
+select * from APP.PREF_EVENTS
+drop table APP.PREF_EVENTS
+
+select * from APP.PREF_EVENTS_DISPLAYED
+drop table APP.PREF_EVENTS_DISPLAYED
+
+
 select * from APP.PLAYLIST_SONGS
+select ID, SONG_NAME, YOUTUBE_LINK, PLAY_COUNT from APP.PLAYLIST_SONGS where SONG_NAME LIKE '%Ride It%'
 
 drop table APP.PLAYLIST_SONGS 
 drop table APP.YOUTUBE_LINKS
 
-delete FROM APP.YOUTUBE_LINKS WHERE ID > 1
+delete FROM APP.YOUTUBE_LINKS WHERE SONG_NAME LIKE 'B$'
+select count(*) from APP.YOUTUBE_LINKS WHERE SONG_NAME LIKE 'B%'
 
-select * from APP.YOUTUBE_LINKS ORDER BY SONG_NAME
 
-
-select count(*) FROM APP.RAW_XM_SONGS
+select * FROM APP.RAW_XM_SONGS WHERE SONG LIKE 'ty%' ORDER BY SONG ASC, DATE ASC
 select * FROM APP.RAW_XM_GARBAGE
 select TOP 10 PERCENT * FROM APP.XM_SONGS ORDER BY PLAY_COUNT DESC, NEWEST_DATE DESC
+select * FROM APP.XM_SONGS order by PLAY_COUNT desc, NEWEST_DATE desc
 SELECT * FROM APP.XM_SONGS ORDER BY RANDOM() OFFSET 0 ROWS FETCH NEXT 200 ROWS ONLY
+
+create table APP.CONTROL (
+ID integer not null,
+SOURCE varchar(255) not null,
+NEWEST_DATE timestamp not null,
+OLDEST_DATE timestamp not null,
+unique (ID)
+)
+
+select * FROM APP.CONTROL
+drop * FROM APP.CONTROL

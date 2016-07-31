@@ -88,7 +88,7 @@ public class XmTable {
 		try {
 			s = derbyConn.createStatement();
 			//* has id, artist, title, song, newest, oldest, count
-			results = s.executeQuery("select * from "+tableName+" order by PLAY_COUNT desc, NEWEST_DATE desc");
+			results = s.executeQuery("select * from "+tableName+" order by PLAY_COUNT desc, NEWEST_DATE asc");
 			
 			while (results.next()) {
 				XmSong song = new XmSong(results.getString(2), results.getString(3), results.getString(4), sdf.parse(results.getString(5)), 
@@ -127,7 +127,7 @@ public class XmTable {
 		Statement s = null;
 		int i = 0;
 		try {
-			derbyConn.createStatement();
+			s = derbyConn.createStatement();
 			ResultSet results = s.executeQuery("select * from "+tableName);
 			i = 0;
 			while(results.next()) {
